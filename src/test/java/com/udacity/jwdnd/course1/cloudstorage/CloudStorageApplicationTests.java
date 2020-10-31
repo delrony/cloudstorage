@@ -31,7 +31,7 @@ class CloudStorageApplicationTests {
 	}
 
 	@AfterEach
-	public void afterEach() {
+	public void afterAll() {
 		if (this.driver != null) {
 			driver.quit();
 		}
@@ -65,7 +65,7 @@ class CloudStorageApplicationTests {
 
 		// Wait until the Home's logout button is loaded
 		WebDriverWait wait = new WebDriverWait(driver, 5);
-		WebElement marker1 = wait.until(webDriver -> webDriver.findElement(By.id("logout-button")));
+		WebElement marker1 = wait.until(webDriver -> webDriver.findElement(By.cssSelector("div.container")));
 
 		Assertions.assertEquals("Home", driver.getTitle());
 
