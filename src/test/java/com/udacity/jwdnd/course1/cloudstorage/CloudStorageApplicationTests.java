@@ -1,5 +1,6 @@
 package com.udacity.jwdnd.course1.cloudstorage;
 
+import com.udacity.jwdnd.course1.cloudstorage.mapper.NoteMapper;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
@@ -12,11 +13,13 @@ import org.springframework.boot.web.server.LocalServerPort;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CloudStorageApplicationTests {
+	// TODO Refactor code here as much as possible
 
 	@LocalServerPort
 	private int port;
 
 	private WebDriver driver;
+	private WebDriverWait wait;
 	public String baseURL;
 
 	@BeforeAll
@@ -28,6 +31,8 @@ class CloudStorageApplicationTests {
 	public void beforeEach() {
 		this.driver = new ChromeDriver();
 		this.baseURL = "http://localhost:" + this.port;
+
+		this.wait = new WebDriverWait(driver, 5);
 	}
 
 	@AfterEach
@@ -35,6 +40,23 @@ class CloudStorageApplicationTests {
 		if (this.driver != null) {
 			driver.quit();
 		}
+	}
+
+	public void signupAndLogin() throws InterruptedException {
+		String username = "pzastoup";
+		String password = "whatabadpassword";
+
+		driver.get(baseURL + "/signup");
+		SignupPage signupPage = new SignupPage(driver);
+		signupPage.signup("Peter", "Zastoupil", username, password);
+
+		driver.get(baseURL + "/login");
+
+		LoginPage loginPage = new LoginPage(driver);
+		loginPage.login(username, password);
+
+		// Wait until the Home page is loaded
+		Thread.sleep(2000);
 	}
 
 	@Test
@@ -49,23 +71,8 @@ class CloudStorageApplicationTests {
 	}
 
 	@Test
-	public void testUserSignupLoginAndLogout() {
-		String username = "pzastoup";
-		String password = "whatabadpassword";
-		String messageText = "Hello!";
-
-		driver.get(baseURL + "/signup");
-		SignupPage signupPage = new SignupPage(driver);
-		signupPage.signup("Peter", "Zastoupil", username, password);
-
-		driver.get(baseURL + "/login");
-
-		LoginPage loginPage = new LoginPage(driver);
-		loginPage.login(username, password);
-
-		// Wait until the Home's logout button is loaded
-		WebDriverWait wait = new WebDriverWait(driver, 5);
-		WebElement marker1 = wait.until(webDriver -> webDriver.findElement(By.cssSelector("div.container")));
+	public void testUserSignupLoginAndLogout() throws InterruptedException {
+		signupAndLogin();
 
 		Assertions.assertEquals("Home", driver.getTitle());
 
@@ -73,11 +80,77 @@ class CloudStorageApplicationTests {
 		homePage.logout();
 
 		// Wait until the Login Form's submit button is loaded
-		WebElement marker2 = wait.until(webDriver -> webDriver.findElement(By.id("submit-button")));
+		wait.until(webDriver -> webDriver.findElement(By.id("submit-button")));
 
 		driver.get(baseURL + "/home");
 
 		// User should be redirected to the login page
 		Assertions.assertEquals("Login", driver.getTitle());
+	}
+
+	@Test
+	public void testAddNewNote() throws InterruptedException {
+		String title = "TODO";
+		String description = "New Task";
+
+		signupAndLogin();
+
+		driver.get(baseURL + "/home");
+		HomePage homePage = new HomePage(driver);
+
+		homePage.addNewNote(title, description, true);
+
+		Thread.sleep(2000);
+
+		Assertions.assertEquals("Home", driver.getTitle());
+		Assertions.assertTrue(driver.findElement(By.id("nav-notes")).getAttribute("class").contains("show"));
+		Assertions.assertEquals("TODO", driver.findElement(By.cssSelector("#userTable tbody th")).getText());
+		Assertions.assertEquals("New Task", driver.findElement(By.cssSelector("#userTable tbody td:nth-child(3)")).getText());
+	}
+
+	@Test
+	public void testDeleteNote() throws InterruptedException {
+		String title = "TODO";
+		String description = "New Task";
+
+		signupAndLogin();
+
+		driver.get(baseURL + "/home");
+		HomePage homePage = new HomePage(driver);
+
+		homePage.addNewNote(title, description, true);
+		Thread.sleep(2000);
+
+		homePage.deleteNote();
+
+		Thread.sleep(2000);
+
+		Assertions.assertEquals("Home", driver.getTitle());
+		Assertions.assertTrue(driver.findElement(By.id("nav-notes")).getAttribute("class").contains("show"));
+		// We deleted the only element, so the table content should be empty
+		Assertions.assertEquals("", driver.findElement(By.cssSelector("#userTable tbody")).getText());
+	}
+
+	@Test
+	public void testEditNote() throws InterruptedException {
+		String title = "TODO";
+		String description = "New Task";
+
+		signupAndLogin();
+
+		driver.get(baseURL + "/home");
+		HomePage homePage = new HomePage(driver);
+
+		homePage.addNewNote(title, description, true);
+		Thread.sleep(2000);
+
+		homePage.editNote("_changed", "_changed");
+
+		Thread.sleep(2000);
+
+		Assertions.assertEquals("Home", driver.getTitle());
+		Assertions.assertTrue(driver.findElement(By.id("nav-notes")).getAttribute("class").contains("show"));
+		Assertions.assertEquals("TODO_changed", driver.findElement(By.cssSelector("#userTable tbody th")).getText());
+		Assertions.assertEquals("New Task_changed", driver.findElement(By.cssSelector("#userTable tbody td:nth-child(3)")).getText());
 	}
 }
