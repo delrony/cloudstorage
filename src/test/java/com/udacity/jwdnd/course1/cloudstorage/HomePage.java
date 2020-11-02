@@ -33,6 +33,30 @@ public class HomePage {
     @FindBy(css="#userTable tbody")
     private WebElement noteTbody;
 
+    @FindBy(css="#nav-credentials-tab")
+    private WebElement navCredentialsTabLink;
+
+    @FindBy(css="#show-credential")
+    private WebElement showCredentialsButton;
+
+    @FindBy(css="#credential-url")
+    private WebElement credentialUrlText;
+
+    @FindBy(css="#credential-username")
+    private WebElement credentialUsernameText;
+
+    @FindBy(css="#credential-password")
+    private WebElement credentialPasswordText;
+
+    @FindBy(css="a.btn-delete-credential")
+    private WebElement credentialDeleteButton;
+
+    @FindBy(css="button.btn-edit-credential")
+    private WebElement credentialEditButton;
+
+    @FindBy(css="#credentialTable tbody")
+    private WebElement credentialTbody;
+
     public HomePage(WebDriver driver) {
         PageFactory.initElements(driver, this);
     }
@@ -41,10 +65,13 @@ public class HomePage {
         logoutButton.click();
     }
 
+    /**
+     * Notes
+     */
+
     public void addNewNote(String title, String description, Boolean checkIfExists) throws InterruptedException {
         navNotesTabLink.click();
 
-        // Wait until the Home page is loaded
         Thread.sleep(2000);
 
         if (checkIfExists) {
@@ -76,5 +103,57 @@ public class HomePage {
         noteTitleText.sendKeys(title);
         noteDescriptionText.sendKeys(description);
         noteTitleText.submit();
+    }
+
+    /**
+     * Credentials
+     */
+
+    public void addNewCredentials(String url, String username, String password) throws InterruptedException {
+        navCredentialsTabLink.click();
+
+        Thread.sleep(2000);
+
+        if (!credentialTbody.getText().equals("")) {
+            this.deleteCredential();
+        }
+
+        Thread.sleep(2000);
+
+        showCredentialsButton.click();
+
+        Thread.sleep(2000);
+
+        credentialUrlText.sendKeys(url);
+        credentialUsernameText.sendKeys(username);
+        credentialPasswordText.sendKeys(password);
+        credentialUrlText.submit();
+    }
+
+    public void deleteCredential() {
+        credentialDeleteButton.click();
+    }
+
+    public void showCredentialModal() throws InterruptedException {
+        credentialEditButton.click();
+
+        Thread.sleep(2000);
+    }
+
+    public String getCredentialPassword() {
+        return credentialPasswordText.getAttribute("value");
+    }
+
+    public void editCredential(String url, String username, String password) throws InterruptedException {
+        credentialUrlText.clear();
+        credentialUrlText.sendKeys(url);
+
+        credentialUsernameText.clear();
+        credentialUsernameText.sendKeys(username);
+
+        credentialPasswordText.clear();
+        credentialPasswordText.sendKeys(password);
+
+        credentialUrlText.submit();
     }
 }

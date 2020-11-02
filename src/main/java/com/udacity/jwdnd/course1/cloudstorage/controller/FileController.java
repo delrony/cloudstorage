@@ -40,17 +40,20 @@ public class FileController {
                 break;
         }
 
+        attributes.addFlashAttribute("changeSuccess", true);
+
         return "redirect:/home";
     }
 
     @GetMapping("/file-delete")
-    public String deleteFile(@RequestParam(name = "file_id") Integer fileId, Authentication auth) {
+    public String deleteFile(@RequestParam(name = "file_id") Integer fileId, Authentication auth, RedirectAttributes attributes) {
         User user = userService.getUser(auth.getName());
         File file = fileService.getFile(fileId);
 
         if ((file != null) && (user != null)
                 && user.getUserid().intValue() == file.getUserid().intValue()) {
             fileService.deleteFile(fileId);
+            attributes.addFlashAttribute("changeSuccess", true);
         }
 
         return "redirect:/home";

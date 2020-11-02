@@ -1,11 +1,9 @@
 package com.udacity.jwdnd.course1.cloudstorage;
 
-import com.udacity.jwdnd.course1.cloudstorage.mapper.NoteMapper;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -152,5 +150,68 @@ class CloudStorageApplicationTests {
 		Assertions.assertTrue(driver.findElement(By.id("nav-notes")).getAttribute("class").contains("show"));
 		Assertions.assertEquals("TODO_changed", driver.findElement(By.cssSelector("#userTable tbody th")).getText());
 		Assertions.assertEquals("New Task_changed", driver.findElement(By.cssSelector("#userTable tbody td:nth-child(3)")).getText());
+	}
+
+	@Test
+	public void testAddNewCredential() throws InterruptedException {
+		signupAndLogin();
+
+		driver.get(baseURL + "/home");
+		HomePage homePage = new HomePage(driver);
+
+		homePage.addNewCredentials("http://mail.google.com", "test", "12345678");
+
+		Thread.sleep(2000);
+
+		Assertions.assertEquals("Home", driver.getTitle());
+		Assertions.assertTrue(driver.findElement(By.id("nav-credentials")).getAttribute("class").contains("show"));
+		Assertions.assertEquals("http://mail.google.com", driver.findElement(By.cssSelector("#credentialTable tbody th")).getText());
+		Assertions.assertEquals("test", driver.findElement(By.cssSelector("#credentialTable tbody td:nth-child(3)")).getText());
+		Assertions.assertNotEquals("12345678", driver.findElement(By.cssSelector("#credentialTable tbody td:nth-child(4)")).getText());
+	}
+
+	@Test
+	public void testDeleteCredential() throws InterruptedException {
+		signupAndLogin();
+
+		driver.get(baseURL + "/home");
+		HomePage homePage = new HomePage(driver);
+
+		homePage.addNewCredentials("http://mail.google.com", "test", "12345678");
+		Thread.sleep(2000);
+
+		homePage.deleteCredential();
+
+		Thread.sleep(2000);
+
+		Assertions.assertEquals("Home", driver.getTitle());
+		Assertions.assertTrue(driver.findElement(By.id("nav-credentials")).getAttribute("class").contains("show"));
+		// We deleted the only element, so the table content should be empty
+		Assertions.assertEquals("", driver.findElement(By.cssSelector("#credentialTable tbody")).getText());
+	}
+
+	@Test
+	public void testEditCredential() throws InterruptedException {
+		signupAndLogin();
+
+		driver.get(baseURL + "/home");
+		HomePage homePage = new HomePage(driver);
+
+		homePage.addNewCredentials("http://mail.google.com", "test", "12345678");
+		Thread.sleep(2000);
+
+		homePage.showCredentialModal();
+
+		// Password is shown in clear text
+		Assertions.assertEquals("12345678", homePage.getCredentialPassword());
+
+		homePage.editCredential("http://www.google.com", "test1", "abcdefgh");
+
+		Thread.sleep(2000);
+
+		Assertions.assertEquals("Home", driver.getTitle());
+		Assertions.assertTrue(driver.findElement(By.id("nav-credentials")).getAttribute("class").contains("show"));
+		Assertions.assertEquals("http://www.google.com", driver.findElement(By.cssSelector("#credentialTable tbody th")).getText());
+		Assertions.assertEquals("test1", driver.findElement(By.cssSelector("#credentialTable tbody td:nth-child(3)")).getText());
 	}
 }

@@ -1,8 +1,7 @@
 package com.udacity.jwdnd.course1.cloudstorage.controller;
 
-import com.udacity.jwdnd.course1.cloudstorage.model.File;
-import com.udacity.jwdnd.course1.cloudstorage.model.Note;
-import com.udacity.jwdnd.course1.cloudstorage.model.NoteForm;
+import com.udacity.jwdnd.course1.cloudstorage.model.*;
+import com.udacity.jwdnd.course1.cloudstorage.services.CredentialService;
 import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
 import com.udacity.jwdnd.course1.cloudstorage.services.NoteService;
 import org.springframework.stereotype.Controller;
@@ -14,15 +13,22 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 public class HomeController {
     private FileService fileService;
     private NoteService noteService;
+    private CredentialService credentialService;
 
-    public HomeController(FileService fileService, NoteService noteService) {
+    public HomeController(FileService fileService, NoteService noteService, CredentialService credentialService) {
         this.fileService = fileService;
         this.noteService = noteService;
+        this.credentialService = credentialService;
     }
 
     @ModelAttribute("newNote")
     public NoteForm newNote() {
         return new NoteForm();
+    }
+
+    @ModelAttribute("newCredential")
+    public CredentialForm newCredential()  {
+        return new CredentialForm();
     }
 
     @GetMapping("/home")
@@ -32,6 +38,9 @@ public class HomeController {
 
         Note[] notes = noteService.getAllNotes();
         model.addAttribute("notes", notes);
+
+        Credential[] credentials = credentialService.getAllCredentials();
+        model.addAttribute("credentials", credentials);
 
         return "home";
     }

@@ -17,9 +17,9 @@ public class NoteService {
         if (noteForm.getId() != null) {
             // Update Note
             Note note = this.noteMapper.getNote(noteForm.getId());
-            note.setNotetitle(noteForm.getTitle());
-            note.setNotedescription(noteForm.getDescription());
             if (note != null && (note.getUserid() == noteForm.getUserid())) {
+                note.setNotetitle(noteForm.getTitle());
+                note.setNotedescription(noteForm.getDescription());
                 this.noteMapper.update(note);
                 return 1;
             } else {

@@ -35,6 +35,7 @@ public class NoteController {
         this.noteService.saveNote(noteForm);
 
         attributes.addFlashAttribute("fromNote", "OK");
+        attributes.addFlashAttribute("changeSuccess", true);
 
         return "redirect:/home";
     }
@@ -47,6 +48,7 @@ public class NoteController {
         if ((note != null) && (user != null)
                 && user.getUserid().intValue() == note.getUserid().intValue()) {
             this.noteService.deleteNote(noteid);
+            attributes.addFlashAttribute("changeSuccess", true);
         }
 
         attributes.addFlashAttribute("fromNote", "OK");
