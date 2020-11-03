@@ -33,14 +33,18 @@ public class FileController {
 
         switch (fileId) {
             case -1:
-                attributes.addFlashAttribute("fileError", "Unable to upload the file");
+                attributes.addFlashAttribute("errorMessage", "Unable to upload the file");
                 break;
             case -2:
-                attributes.addFlashAttribute("fileError", "The filename already exists");
+                attributes.addFlashAttribute("errorMessage", "The filename already exists");
                 break;
         }
 
-        attributes.addFlashAttribute("changeSuccess", true);
+        if (fileId > 0) {
+            attributes.addFlashAttribute("changeSuccess", true);
+        } else {
+            attributes.addFlashAttribute("changeError", true);
+        }
 
         return "redirect:/home";
     }
@@ -54,6 +58,8 @@ public class FileController {
                 && user.getUserid().intValue() == file.getUserid().intValue()) {
             fileService.deleteFile(fileId);
             attributes.addFlashAttribute("changeSuccess", true);
+        } else {
+            attributes.addFlashAttribute("changeError", true);
         }
 
         return "redirect:/home";

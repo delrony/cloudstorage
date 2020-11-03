@@ -46,6 +46,8 @@ public class CredentialController {
                 && user.getUserid().intValue() == credential.getUserid().intValue()) {
             this.credentialService.deleteCredential(credentialid);
             attributes.addFlashAttribute("changeSuccess", true);
+        } else {
+            attributes.addFlashAttribute("changeError", true);
         }
 
         attributes.addFlashAttribute("fromCredential", "OK");

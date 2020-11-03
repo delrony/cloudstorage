@@ -15,9 +15,14 @@
                     <button type="submit" id="logout-button" class="btn btn-secondary float-right">Logout</button>
                 </form>
             </div>
-            <div class="alert alert-success alert-dismissible" th:if="${changeSuccess}" style="clear:right; top: 1em;">
+            <div class="alert alert-success alert-dismissible info-alert" th:if="${changeSuccess}" style="clear:right; top: 1em;">
                 <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                 <strong>Success!</strong> Your changes were successfully saved.
+            </div>
+            <div class="alert alert-danger alert-dismissible info-alert" th:if="${changeError}" style="clear:right; top: 1em;">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <span>Your changes were not saved.</span><br />
+                <strong th:if="${errorMessage}">Error:</strong> <span th:if="${errorMessage}" th:text="${errorMessage}"></span>
             </div>
             <div id="contentDiv" style="clear: right;">
                 <nav style="clear: right;">
@@ -44,9 +49,6 @@
                                 </div>
                             </div>
                         </form>
-                        <div th:if="${fileError}" class="alert alert-danger">
-                            <span th:text="${fileError}"></span>
-                        </div>
                         <div class="table-responsive">
                             <table class="table table-striped" id="fileTable">
                                 <thead>
@@ -221,6 +223,11 @@
                 $('#credential-password').val(password ? password : '');
                 $('#credentialModal').modal('show');
             }
+
+            // Close the info-alerts automatically
+            window.setTimeout(function() {
+                $(".info-alert").alert('close')
+            }, 4000);
         </script>
 
         <script type="text/javascript" th:if="${fromNote}">

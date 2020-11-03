@@ -49,6 +49,8 @@ public class NoteController {
                 && user.getUserid().intValue() == note.getUserid().intValue()) {
             this.noteService.deleteNote(noteid);
             attributes.addFlashAttribute("changeSuccess", true);
+        } else {
+            attributes.addFlashAttribute("changeError", true);
         }
 
         attributes.addFlashAttribute("fromNote", "OK");
