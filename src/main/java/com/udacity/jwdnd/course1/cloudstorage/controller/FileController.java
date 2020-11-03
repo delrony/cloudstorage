@@ -38,6 +38,9 @@ public class FileController {
             case -2:
                 attributes.addFlashAttribute("errorMessage", "The filename already exists");
                 break;
+            case -3:
+                attributes.addFlashAttribute("errorMessage", "Either no file selected or the file is empty");
+                break;
         }
 
         if (fileId > 0) {

@@ -5,8 +5,8 @@ import org.apache.ibatis.annotations.*;
 
 @Mapper
 public interface CredentialMapper {
-    @Select("SELECT * FROM CREDENTIALS")
-    Credential[] getAllCredentials();
+    @Select("SELECT * FROM CREDENTIALS WHERE userid = #{userid}")
+    Credential[] getAllCredentials(Integer userid);
 
     @Select("SELECT * FROM CREDENTIALS WHERE credentialid = #{credentialid}")
     Credential getCredential(Integer credentialid);

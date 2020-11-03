@@ -21,6 +21,10 @@ public class FileService {
 
     public int createFile(MultipartFile multipartFile, Integer userid) {
         try {
+            if (multipartFile.isEmpty()) {
+                return -3;
+            }
+
             // Check if the file with the filename exists
             if (isFileNameExists(multipartFile.getOriginalFilename())) {
                 return -2;
@@ -51,8 +55,8 @@ public class FileService {
         }
     }
 
-    public File[] getAllFiles() {
-        return fileMapper.getAllFiles();
+    public File[] getAllFiles(Integer userid) {
+        return fileMapper.getAllFiles(userid);
     }
 
     public void deleteFile(Integer fileId) {

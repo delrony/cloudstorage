@@ -57,8 +57,8 @@ public class CredentialService {
         return this.credentialMapper.getCredential(credentialid);
     }
 
-    public Credential[] getAllCredentials() {
-        Credential[] credentials = this.credentialMapper.getAllCredentials();
+    public Credential[] getAllCredentials(Integer userid) {
+        Credential[] credentials = this.credentialMapper.getAllCredentials(userid);
 
         // Get clear text password
         for (Credential c: credentials) {

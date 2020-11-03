@@ -36,8 +36,8 @@ public class NoteService {
         return this.noteMapper.getNote(noteid);
     }
 
-    public Note[] getAllNotes() {
-        return this.noteMapper.getAllNotes();
+    public Note[] getAllNotes(Integer userid) {
+        return this.noteMapper.getAllNotes(userid);
     }
 
     public void deleteNote(Integer noteId) {

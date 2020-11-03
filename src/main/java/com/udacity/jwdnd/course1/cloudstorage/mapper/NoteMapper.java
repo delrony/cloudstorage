@@ -5,8 +5,8 @@ import org.apache.ibatis.annotations.*;
 
 @Mapper
 public interface NoteMapper {
-    @Select("SELECT * FROM NOTES")
-    Note[] getAllNotes();
+    @Select("SELECT * FROM NOTES WHERE userid = #{userid}")
+    Note[] getAllNotes(Integer userid);
 
     @Select("SELECT * FROM NOTES WHERE noteid = #{noteid}")
     Note getNote(Integer noteid);
