@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class CloudStorageApplicationTests {
 	// TODO Refactor code here as much as possible
 
@@ -40,15 +41,17 @@ class CloudStorageApplicationTests {
 		}
 	}
 
-	public void signupAndLogin() throws InterruptedException {
+	public void signupAndLogin(boolean doSignup) throws InterruptedException {
 		String username = "pzastoup";
 		String password = "whatabadpassword";
 
-		driver.get(baseURL + "/signup");
-		SignupPage signupPage = new SignupPage(driver);
-		signupPage.signup("Peter", "Zastoupil", username, password);
-
-		driver.get(baseURL + "/login");
+		if (doSignup) {
+			driver.get(baseURL + "/signup");
+			SignupPage signupPage = new SignupPage(driver);
+			signupPage.signup("Peter", "Zastoupil", username, password);
+		} else {
+			driver.get(baseURL + "/login");
+		}
 
 		LoginPage loginPage = new LoginPage(driver);
 		loginPage.login(username, password);
@@ -58,6 +61,7 @@ class CloudStorageApplicationTests {
 	}
 
 	@Test
+	@Order(1)
 	public void testUnauthorizedUser() {
 		driver.get(baseURL + "/signup");
 		Assertions.assertEquals("Sign Up", driver.getTitle());
@@ -69,8 +73,9 @@ class CloudStorageApplicationTests {
 	}
 
 	@Test
+	@Order(2)
 	public void testUserSignupLoginAndLogout() throws InterruptedException {
-		signupAndLogin();
+		signupAndLogin(true);
 
 		Assertions.assertEquals("Home", driver.getTitle());
 
@@ -87,11 +92,12 @@ class CloudStorageApplicationTests {
 	}
 
 	@Test
+	@Order(3)
 	public void testAddNewNote() throws InterruptedException {
 		String title = "TODO";
 		String description = "New Task";
 
-		signupAndLogin();
+		signupAndLogin(false);
 
 		driver.get(baseURL + "/home");
 		HomePage homePage = new HomePage(driver);
@@ -107,11 +113,12 @@ class CloudStorageApplicationTests {
 	}
 
 	@Test
+	@Order(5)
 	public void testDeleteNote() throws InterruptedException {
 		String title = "TODO";
 		String description = "New Task";
 
-		signupAndLogin();
+		signupAndLogin(false);
 
 		driver.get(baseURL + "/home");
 		HomePage homePage = new HomePage(driver);
@@ -130,11 +137,12 @@ class CloudStorageApplicationTests {
 	}
 
 	@Test
+	@Order(4)
 	public void testEditNote() throws InterruptedException {
 		String title = "TODO";
 		String description = "New Task";
 
-		signupAndLogin();
+		signupAndLogin(false);
 
 		driver.get(baseURL + "/home");
 		HomePage homePage = new HomePage(driver);
@@ -153,8 +161,9 @@ class CloudStorageApplicationTests {
 	}
 
 	@Test
+	@Order(6)
 	public void testAddNewCredential() throws InterruptedException {
-		signupAndLogin();
+		signupAndLogin(false);
 
 		driver.get(baseURL + "/home");
 		HomePage homePage = new HomePage(driver);
@@ -171,8 +180,9 @@ class CloudStorageApplicationTests {
 	}
 
 	@Test
+	@Order(8)
 	public void testDeleteCredential() throws InterruptedException {
-		signupAndLogin();
+		signupAndLogin(false);
 
 		driver.get(baseURL + "/home");
 		HomePage homePage = new HomePage(driver);
@@ -191,8 +201,9 @@ class CloudStorageApplicationTests {
 	}
 
 	@Test
+	@Order(7)
 	public void testEditCredential() throws InterruptedException {
-		signupAndLogin();
+		signupAndLogin(false);
 
 		driver.get(baseURL + "/home");
 		HomePage homePage = new HomePage(driver);
