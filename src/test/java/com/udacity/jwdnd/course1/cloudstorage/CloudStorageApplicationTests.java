@@ -53,6 +53,8 @@ class CloudStorageApplicationTests {
 			driver.get(baseURL + "/login");
 		}
 
+		Thread.sleep(2000);
+
 		LoginPage loginPage = new LoginPage(driver);
 		loginPage.login(username, password);
 
